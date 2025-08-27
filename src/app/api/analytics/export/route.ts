@@ -224,7 +224,7 @@ async function generateFocusSessionsCSV(userId: string, filters: any) {
   // Generate CSV
   const csv = [
     'ID,Task Title,Started At,Ended At,Duration (minutes),Duration (hours),Status,Phase,Completed Pomodoros,Awarded Points,Streak Multiplier,Session Hash',
-    ...focusSessions.map(session => [
+    ...focusSessions.map((session: any) => [
       session.id,
       `"${session.task?.title?.replace(/"/g, '""') || 'No Task'}"`,
       new Date(session.started_at).toISOString(),
