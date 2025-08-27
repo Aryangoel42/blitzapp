@@ -1,0 +1,210 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  name              String?
+  auth_provider     String    @default("email")
+  points            Int       @default(0)
+  streak_days       Int       @default(0)
+  notification_task_due Boolean @default(true)
+  notification_focus_end Boolean @default(true)
+  notification_daily_email Boolean @default(false)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  tasks             Task[]
+  focusSessions     FocusSession[]
+  focusPresets      FocusPreset[]
+  pointsLedger      PointsLedger[]
+  streakLedger      StreakLedger[]
+  treeInstances     TreeInstance[]
+  notifications     Notification[]
+  exportRecords     ExportRecord[]
+  pushSubscriptions PushSubscription[]
+}
+
+model Task {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  title             String
+  description       String?
+  priority          String    @default("medium")
+  due_at            DateTime?
+  estimate_min      Int?      @default(0)
+  status            String    @default("todo")
+  tags_json         String    @default("[]")
+  recurrence_rule   String?
+  reminder_time     DateTime?
+  reminder_frequency String?  // once|hourly|daily|weekly|custom
+  parent_task_id    String?
+  parentTask        Task?     @relation("Subtasks", fields: [parent_task_id], references: [id])
+  subtasks          Task[]    @relation("Subtasks")
+  order_index       Int       @default(0)
+  focus_sessions_count Int    @default(0)
+  total_focus_time_min Int    @default(0)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  completed_at      DateTime?
+  focusSessions     FocusSession[]
+
+  @@index([userId, status])
+  @@index([userId, due_at])
+  @@index([parent_task_id])
+  @@index([reminder_time])
+}
+
+model FocusPreset {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  name              String
+  focus_min         Int
+  short_break_min   Int
+  long_break_min    Int
+  long_break_every  Int
+  is_custom         Boolean   @default(true)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([userId, is_custom])
+}
+
+model FocusSession {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  task              Task?     @relation(fields: [taskId], references: [id])
+  taskId            String?
+  presetId          String?   // Reference to FocusPreset
+  duration_min      Int       @default(0)
+  completed_pomodoros Int     @default(0)
+  phase             String?   // focus|short_break|long_break
+  started_at        DateTime
+  completed_at      DateTime?
+  status            String    @default("active") // active|completed|abandoned
+  notes             String?
+  session_hash      String?   @unique
+  awarded_points    Int       @default(0)
+  streak_multiplier Float     @default(1.0)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  @@index([userId, status])
+  @@index([userId, started_at])
+}
+
+model PointsLedger {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  delta             Int       // positive for earned, negative for spent
+  reason            String    // focus_completed|shop_purchase|streak_bonus
+  ref_id            String?   // reference to related record
+  meta_json         String?   // additional metadata
+  created_at        DateTime  @default(now())
+
+  @@index([userId, reason])
+  @@index([userId, created_at])
+}
+
+model StreakLedger {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  streak_days       Int
+  event_type        String    // focus_completed|day_break
+  created_at        DateTime  @default(now())
+
+  @@index([userId, created_at])
+}
+
+model TreeSpecies {
+  id                String    @id
+  name              String
+  stages            Int
+  unlock_cost       Int       @default(0)
+  art_refs          String    // JSON array of art references
+  created_at        DateTime  @default(now())
+  treeInstances     TreeInstance[]
+}
+
+model TreeInstance {
+  id                        String    @id @default(uuid())
+  user                      User      @relation(fields: [userId], references: [id])
+  userId                    String
+  species                   TreeSpecies @relation(fields: [speciesId], references: [id])
+  speciesId                 String
+  stage                     Int       @default(0)
+  planted_at                DateTime  @default(now())
+  last_growth_session_ids   String    @default("[]") // JSON array of session IDs
+  total_growth_sessions     Int       @default(0)
+  last_growth_date          DateTime?
+  created_at                DateTime  @default(now())
+  updated_at                DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([speciesId])
+}
+
+model Notification {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  type              String    // task_due|focus_end|streak_milestone|daily_summary|focus_completed
+  channel           String    // push|email|sms
+  payload_json      String    // notification content
+  scheduled_at      DateTime
+  sent_at           DateTime?
+  created_at        DateTime  @default(now())
+
+  @@index([userId, type])
+  @@index([userId, scheduled_at])
+  @@index([scheduled_at, sent_at])
+}
+
+model ExportRecord {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  export_type       String    // tasks|focus-sessions|summary
+  filters           String    // JSON string of applied filters
+  date_range        String    // JSON string of date range
+  status            String    // pending|completed|failed
+  file_size         Int?      // size in bytes
+  error_message     String?
+  created_at        DateTime  @default(now())
+  completed_at      DateTime?
+
+  @@index([userId, export_type])
+  @@index([userId, status])
+  @@index([userId, created_at])
+}
+
+model PushSubscription {
+  id                String    @id @default(uuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  endpoint          String
+  p256dh            String    // ECDH public key
+  auth              String    // Authentication secret
+  user_agent        String?   // Browser/device info
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  @@unique([userId, endpoint], name: "userId_endpoint")
+  @@index([userId])
+}
+
+

@@ -1,0 +1,43 @@
+{
+  "name": "blitzitapp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "analyze": "ANALYZE=true npm run build",
+    "analyze:server": "ANALYZE=true npm run build && npm run start",
+    "performance:test": "npm run build && npm run start",
+    "lighthouse": "npx lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "clsx": "^2.0.0",
+    "html2canvas": "^1.4.1",
+    "next": "14.0.4",
+    "next-pwa": "^5.6.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "web-push": "^3.6.6",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^14.2.32",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/web-push": "^3.6.0",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8",
+    "prisma": "^5.7.1",
+    "tailwindcss": "^3.3.0",
+    "tsx": "^4.6.2",
+    "typescript": "^5"
+  }
+}
