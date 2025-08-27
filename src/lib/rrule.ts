@@ -224,4 +224,13 @@ export class RRuleParser {
   }
 }
 
+// Export convenience functions
+export function parseRRule(ruleString: string): RecurrenceRule | null {
+  return RRuleParser.parse(ruleString);
+}
+
+export function previewOccurrences(rule: RecurrenceRule, count: number = 10): Date[] {
+  return RRuleParser.generate(rule, count);
+}
+
 

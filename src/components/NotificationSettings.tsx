@@ -266,9 +266,11 @@ export default function NotificationSettings({ userId, userEmail }: Notification
           <strong>Note:</strong> Notifications work best when you keep the app open or have push notifications enabled.
         </p>
         <p>
-          If you're not receiving notifications, check your browser's notification settings and make sure Blitzit is allowed to send notifications.
+          If you&apos;re not receiving notifications, check your browser&apos;s notification settings and make sure Blitzit is allowed to send notifications.
         </p>
       </div>
     </div>
   );
 }
+
+export { NotificationSettings };

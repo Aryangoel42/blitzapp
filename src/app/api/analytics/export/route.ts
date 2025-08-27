@@ -75,9 +75,9 @@ async function generateSummaryCSV(userId: string, filters: any) {
   });
 
   // Calculate KPIs
-  const tasksDone = tasks.filter(t => t.status === 'done').length;
+  const tasksDone = tasks.filter((t: any) => t.status === 'done').length;
   const totalTasks = tasks.length;
-  const totalFocusMinutes = focusSessions.reduce((sum, s) => sum + s.focus_minutes, 0);
+  const totalFocusMinutes = focusSessions.reduce((sum: number, s: any) => sum + s.focus_minutes, 0);
   const totalFocusHours = Math.round((totalFocusMinutes / 60) * 100) / 100;
   const daysInRange = Math.ceil((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
   const tasksPerDay = daysInRange > 0 ? Math.round((totalTasks / daysInRange) * 100) / 100 : 0;
@@ -138,7 +138,7 @@ async function generateTasksCSV(userId: string, filters: any) {
   // Filter by tags if specified
   let filteredTasks = tasks;
   if (filters?.tags?.length > 0) {
-    filteredTasks = tasks.filter(task => {
+    filteredTasks = tasks.filter((task: any) => {
       try {
         const tags = JSON.parse(task.tags_json || '[]');
         return filters.tags.some((tag: string) => tags.includes(tag));
@@ -151,8 +151,8 @@ async function generateTasksCSV(userId: string, filters: any) {
   // Generate CSV
   const csv = [
     'ID,Title,Status,Priority,Due Date,Completed Date,Created Date,Estimate (min),Total Focus Minutes,Total Focus Hours,Focus Sessions Count,Completion Status,Efficiency %,Tags',
-    ...filteredTasks.map(task => {
-      const totalFocusMinutes = task.focusSessions.reduce((sum, s) => sum + s.focus_minutes, 0);
+    ...filteredTasks.map((task: any) => {
+      const totalFocusMinutes = task.focusSessions.reduce((sum: number, s: any) => sum + s.focus_minutes, 0);
       const totalFocusHours = Math.round((totalFocusMinutes / 60) * 100) / 100;
       
       let completionStatus = 'On Time';
