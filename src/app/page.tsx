@@ -71,7 +71,7 @@ export default function HomePage() {
         {/* Motivational Quote */}
         <div className="mb-12 max-w-3xl">
           <blockquote className="text-2xl md:text-3xl font-medium text-gray-800 dark:text-gray-200 mb-4 italic">
-            "{motivationalQuotes[currentQuote].text}"
+            &ldquo;{motivationalQuotes[currentQuote].text}&rdquo;
           </blockquote>
           <cite className="text-lg text-brand-600 dark:text-brand-400 font-medium">
             — {motivationalQuotes[currentQuote].author}

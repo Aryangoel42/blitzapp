@@ -237,13 +237,15 @@ export default function QuickAdd({
 
       <div className="text-xs text-gray-500 space-y-1">
         <p><strong>Smart parsing examples:</strong></p>
-        <p>• "Pay bills tomorrow 5pm #finance 30m" → Due tomorrow at 5pm, tagged #finance, 30 min estimate</p>
-        <p>• "Review proposal urgent #work" → High priority, tagged #work</p>
-        <p>• "Call mom next monday 2pm" → Due next Monday at 2pm</p>
-        <p>• "Weekly report #work" → Tagged #work</p>
+        <p>&bull; &ldquo;Pay bills tomorrow 5pm #finance 30m&rdquo; &rarr; Due tomorrow at 5pm, tagged #finance, 30 min estimate</p>
+        <p>&bull; &ldquo;Review proposal urgent #work&rdquo; &rarr; High priority, tagged #work</p>
+        <p>&bull; &ldquo;Call mom next monday 2pm&rdquo; &rarr; Due next Monday at 2pm</p>
+        <p>&bull; &ldquo;Weekly report #work&rdquo; &rarr; Tagged #work</p>
       </div>
     </div>
   );
 }
+
+export { QuickAdd };
 
 

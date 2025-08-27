@@ -60,14 +60,14 @@ export async function GET(req: NextRequest) {
       }
 
       // Add task completions
-      tasks.forEach(task => {
+      tasks.forEach((task: any) => {
         const dateKey = task.completed_at!.toISOString().split('T')[0];
         const existing = dailyStats.get(dateKey) || { tasks: 0, focusMinutes: 0 };
         dailyStats.set(dateKey, { ...existing, tasks: existing.tasks + 1 });
       });
 
       // Add focus sessions
-      focusSessions.forEach(session => {
+      focusSessions.forEach((session: any) => {
         const dateKey = session.started_at.toISOString().split('T')[0];
         const existing = dailyStats.get(dateKey) || { tasks: 0, focusMinutes: 0 };
         dailyStats.set(dateKey, { 
@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
         hourlyStats.set(hour, 0);
       }
 
-      focusSessions.forEach(session => {
+      focusSessions.forEach((session: any) => {
         const hour = session.started_at.getHours();
         const existing = hourlyStats.get(hour) || 0;
         hourlyStats.set(hour, existing + session.focus_minutes);

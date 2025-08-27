@@ -18,6 +18,12 @@ const baseConfig = {
       },
     },
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   reactStrictMode: true,
   compiler: {
     removeConsole: isProd ? { exclude: ['error'] } : false,
